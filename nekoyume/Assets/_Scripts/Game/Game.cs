@@ -181,7 +181,7 @@ namespace Nekoyume.Game
         {
             Debug.Log("[Game] Awake() invoked");
             Application.runInBackground = true;
-#if UNITY_IOS && !UNITY_IOS_SIMULATOR && !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_IOS && !UNITY_IOS_SIMULATOR
             string prefix = Path.Combine(Platform.DataPath.Replace("Data", ""), "Frameworks");
             //Load dynamic library of rocksdb
             string RocksdbLibPath = Path.Combine(prefix, "rocksdb.framework", "librocksdb");
@@ -190,13 +190,13 @@ namespace Nekoyume.Game
             //Set the path of secp256k1's dynamic library
             string secp256k1LibPath = Path.Combine(prefix, "secp256k1.framework", "libsecp256k1");
             Secp256k1Net.UnityPathHelper.SetSpecificPath(secp256k1LibPath);
-#elif UNITY_IOS_SIMULATOR && !UNITY_EDITOR
+#elif !UNITY_EDITOR && UNITY_IOS_SIMULATOR
             string rocksdbLibPath = Platform.GetStreamingAssetsPath("librocksdb.dylib");
             Native.LoadLibrary(rocksdbLibPath);
 
             string secp256LibPath = Platform.GetStreamingAssetsPath("libsecp256k1.dylib");
             Secp256k1Net.UnityPathHelper.SetSpecificPath(secp256LibPath);
-#elif UNITY_ANDROID
+#elif !UNITY_EDITOR && UNITY_ANDROID
             // string loadPath = Application.dataPath.Split("/base.apk")[0];
             // loadPath = Path.Combine(loadPath, "lib");
             // loadPath = Path.Combine(loadPath, Environment.Is64BitOperatingSystem ? "arm64" : "arm");
@@ -209,9 +209,9 @@ namespace Nekoyume.Game
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             base.Awake();
 
-#if UNITY_ANDROID
+#if !UNITY_EDITOR && UNITY_ANDROID
             // Load CommandLineOptions at Start() after init
-#elif UNITY_IOS
+#elif !UNITY_EDITOR && UNITY_IOS
             _commandLineOptions = CommandLineOptions.Load(Platform.GetStreamingAssetsPath("clo.json"));
             OnLoadCommandlineOptions();
 #else
@@ -220,11 +220,11 @@ namespace Nekoyume.Game
 #endif
             URL = Url.Load(UrlJsonPath);
 
-#if UNITY_EDITOR && !UNITY_ANDROID
+#if UNITY_EDITOR
             // Local Headless
             if (useLocalHeadless && HeadlessHelper.CheckHeadlessSettings())
             {
-                _headlessThread = new Thread(() => HeadlessHelper.RunLocalHeadless());
+                _headlessThread = new Thread(HeadlessHelper.RunLocalHeadless);
                 _headlessThread.Start();
             }
 
@@ -259,7 +259,7 @@ namespace Nekoyume.Game
             gameObject.AddComponent<RequestManager>();
             var liveAssetManager = gameObject.AddComponent<LiveAssetManager>();
             liveAssetManager.InitializeData();
-#if UNITY_ANDROID
+#if !UNITY_EDITOR && UNITY_ANDROID
             yield return liveAssetManager.InitializeApplicationCLO();
 
             _commandLineOptions = liveAssetManager.CommandLineOptions;
@@ -1455,7 +1455,7 @@ namespace Nekoyume.Game
             Debug.Log(_commandLineOptions.ToString());
         }
 
-#if UNITY_ANDROID
+#if !UNITY_EDITOR && UNITY_ANDROID
         void Update()
         {
             if (Platform.IsMobilePlatform())
