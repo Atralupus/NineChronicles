@@ -50,7 +50,7 @@ jobs:
 
       - name: Check if Android
         id: check-android
-        run: echo "is_android=${{ matrix.targetPlatform == 'Android' }}" >> $GITHUB_ENV
+        run: echo "is_android=${{ matrix.targetPlatform == 'Android' }}" >> $GITHUB_OUTPUT
 
       - uses: actions/cache@v3
         with:
@@ -102,7 +102,7 @@ jobs:
           if-no-files-found: error
 
   extract:
-    if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/ci/') || startsWith(github.event.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.event.ref, 'refs/tags/')
     needs: build
     runs-on: ubuntu-latest
     outputs:
@@ -133,7 +133,7 @@ jobs:
           fi
 
   release:
-    if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/ci/') || startsWith(github.ref, 'refs/heads/rc-v/') || startsWith(github.event.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.event.ref, 'refs/tags/')
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -168,7 +168,7 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/release/') && needs.build.outputs.is_android == 'true'
     name: Release to the Google Play Store
     runs-on: ubuntu-latest
-    needs: extract
+    needs: ["extract", "build"]
     environment:
       name: ${{ needs.extract.outputs.network }}
     env:
