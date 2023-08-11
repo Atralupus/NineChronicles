@@ -100,7 +100,7 @@ jobs:
           if-no-files-found: error
 
   extract:
-    if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.event.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/heads/ci-test/') || startsWith(github.event.ref, 'refs/tags/')
     needs: build
     runs-on: ubuntu-latest
     outputs:
@@ -112,7 +112,7 @@ jobs:
       - name: extract
         id: extract
         run: |
-          if [[ "${{ startsWith(github.ref, 'refs/heads/release/') }}" == "true" ]]; then
+          if [[ "${{ startsWith(github.ref, 'refs/heads/ci-test/') }}" == "true" ]]; then
               timestamp=$(date +%s)
 
               echo "::set-output name=network::internal"
@@ -131,7 +131,7 @@ jobs:
           fi
 
   release-to-google-play:
-    if: startsWith(github.ref, 'refs/heads/release/') && needs.build.outputs.is_android == 'true'
+    if: startsWith(github.ref, 'refs/heads/ci-test/') && needs.build.outputs.is_android == 'true'
     name: Release to the Google Play Store
     runs-on: ubuntu-latest
     needs: ["extract", "build"]
