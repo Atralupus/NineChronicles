@@ -8,7 +8,6 @@ on:
       - rc-v*
       - release/*
       - hotfix/*
-      - ci/*
     tags: ["*"]
   pull_request:
     types: [ready_for_review, opened, reopened, auto_merge_enabled]
@@ -159,6 +158,36 @@ jobs:
           ESIGNER_PASSWORD: ${{ secrets.ESIGNER_PASSWORD }}
           ESIGNER_TOTP_SECRET: ${{ secrets.ESIGNER_TOTP_SECRET }}
 
+  release-to-google-play:
+    if: startsWith(github.ref, 'refs/heads/release/') && ${{ matrix.targetPlatform }} == "Android"
+    name: Release to the Google Play Store
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      GOOGLE_PLAY_KEY_FILE: ${{ secrets.GOOGLE_PLAY_KEY_FILE }}
+      GOOGLE_PLAY_KEY_FILE_PATH:
+        ${{ format('{0}/fastlane/google-fastlane.json', github.workspace) }}
+      ANDROID_BUILD_FILE_PATH: ${{ format('{0}/build/Android/9c.aab', github.workspace) }}
+      ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Download Android Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/Android
+      - name: Add Authentication
+        run: echo "$GOOGLE_PLAY_KEY_FILE" > $GOOGLE_PLAY_KEY_FILE_PATH
+      - name: Set up Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
+      - name: Upload to Google Play Internal
+        uses: maierj/fastlane-action@v2.0.1
+        with:
+          lane: 'android internal' # Change to upload to a different lane
 
   update-latest-metadata:
     if: startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/ci/') || startsWith(github.ref, 'refs/heads/rc-v/') || startsWith(github.event.ref, 'refs/tags/')
