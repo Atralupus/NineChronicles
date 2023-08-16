@@ -321,7 +321,7 @@ namespace Nekoyume.Blockchain
                 serialized.ElementAt(1).ToBigInteger());
         }
 
-        public async Task<Dictionary<Address, AvatarState>> GetAvatarStates(
+        public async Task<Dictionary<Address, AvatarState>> GetAvatarStatesAsync(
             IEnumerable<Address> addressList,
             long? blockIndex = null)
         {
@@ -343,7 +343,7 @@ namespace Nekoyume.Blockchain
             return result;
         }
 
-        public async Task<Dictionary<Address, IValue>> GetStateBulk(IEnumerable<Address> addressList)
+        public async Task<Dictionary<Address, IValue>> GetStateBulkAsync(IEnumerable<Address> addressList)
         {
             Dictionary<byte[], byte[]> raw =
                 await _service.GetStateBulk(addressList.Select(a => a.ToByteArray()),
