@@ -9,11 +9,9 @@ namespace Nekoyume
         {
             get
             {
-#if UNITY_EDITOR
-                return Application.persistentDataPath;
-#elif UNITY_ANDROID
+#if UNITY_ANDROID
                 return "storage/emulated/0/Documents/NineChronicles";
-#elif UNITY_IOS
+#else
                 return Application.persistentDataPath;
 #endif
             }
