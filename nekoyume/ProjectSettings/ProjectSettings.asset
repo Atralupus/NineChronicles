@@ -18,7 +18,7 @@ PlayerSettings:
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_ShowUnitySplashScreen: 1
-  m_ShowUnitySplashLogo: 0
+  m_ShowUnitySplashLogo: 1
   m_SplashScreenOverlayOpacity: 0.5
   m_SplashScreenAnimation: 0
   m_SplashScreenLogoStyle: 1
@@ -176,7 +176,7 @@ PlayerSettings:
   ForceInternetPermission: 0
   ForceSDCardPermission: 1
   CreateWallpaper: 0
-  APKExpansionFiles: 1
+  APKExpansionFiles: 0
   keepLoadedShadersAlive: 0
   StripUnusedMeshComponents: 1
   VertexChannelCompressionMask: 4054
@@ -253,7 +253,7 @@ PlayerSettings:
   AndroidTargetDevices: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: '{inproject}: 9c-aos-signing-keystore.keystore'
+  AndroidKeystoreName: '{dedicated}: Downloads/9c-aos-signing-keystore.keystore'
   AndroidKeyaliasName: 9c
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
